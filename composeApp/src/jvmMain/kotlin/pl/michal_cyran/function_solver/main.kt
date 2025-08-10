@@ -2,6 +2,7 @@ package pl.michal_cyran.function_solver
 
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import pl.michal_cyran.function_solver.ui.view_model.FunctionViewModel
 
 fun main() = application {
     Window(
@@ -9,6 +10,8 @@ fun main() = application {
         title = "FunctionSolver",
 //        alwaysOnTop = true,
     ) {
-        App()
+        App(
+            viewModel = FunctionViewModel()
+        )
     }
 }

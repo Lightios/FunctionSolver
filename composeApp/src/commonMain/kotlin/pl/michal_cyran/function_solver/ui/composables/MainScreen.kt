@@ -18,8 +18,10 @@ import pl.michal_cyran.function_solver.ui.view_model.FunctionViewModel
 
 
 @Composable
-fun MainScreen() {
-    val viewModel = viewModel<FunctionViewModel>()
+fun MainScreen(
+    viewModel: FunctionViewModel
+) {
+//    val viewModel = viewModel<FunctionViewModel>()
     val function by viewModel.function.collectAsStateWithLifecycle()
     val answer by viewModel.answer.collectAsStateWithLifecycle()
 
