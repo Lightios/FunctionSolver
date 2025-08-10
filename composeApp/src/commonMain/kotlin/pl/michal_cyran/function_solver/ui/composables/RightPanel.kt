@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pl.michal_cyran.function_solver.function.domain.Function
+import pl.michal_cyran.function_solver.function.domain.Parameters
 import pl.michal_cyran.function_solver.function.domain.numbers_set.NumbersContainer
 import pl.michal_cyran.function_solver.function.domain.numbers_set.NumbersInterval
 
@@ -22,6 +23,11 @@ fun RightPanel(
     function: Function,
     onAnswerHover: (List<NumbersContainer>, Boolean) -> Unit,
     onAnswerUnhover: () -> Unit,
+    userAnswers: Map<Parameters, String>,
+    onAnswerChange: (Parameters, String) -> Unit,
+    onCheckAnswer: (Parameters) -> Unit,
+    isAnswerCorrect: Boolean? = null,
+    checkedAnswer: Parameters?,
     modifier: Modifier = Modifier
 ) {
     var selectedTabIndex by remember { mutableStateOf(0) }
@@ -32,12 +38,6 @@ fun RightPanel(
             TabRow(
                 selectedTabIndex = selectedTabIndex,
                 modifier = Modifier.fillMaxWidth(1f).padding(8.dp),
-//                divider = {},
-//                indicator = { tabPositions ->
-//                    androidx.compose.material3.TabRowDefaults.Indicator(
-//                        modifier = Modifier.width(tabPositions[selectedTabIndex].width)
-//                    )
-//                }
             ){
                 Tab(
                     selected = selectedTabIndex == 0,
@@ -55,7 +55,13 @@ fun RightPanel(
 
         item {
             when (selectedTabIndex) {
-                0 -> FunctionPropertiesPanel()
+                0 -> FunctionPropertiesPanel(
+                    userAnswers = userAnswers,
+                    onAnswerChange = onAnswerChange,
+                    onCheckAnswer = onCheckAnswer,
+                    isAnswerCorrect = isAnswerCorrect,
+                    checkedAnswer = checkedAnswer,
+                )
                 1 -> AnswersPanel(
                     function = function,
                     onAnswerHover = onAnswerHover,

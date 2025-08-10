@@ -10,6 +10,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -30,10 +31,12 @@ fun Answer(
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
 
-    if (isHovered) {
-        onHover()
-    } else {
-        onUnhover()
+    LaunchedEffect(isHovered) {
+        if (isHovered) {
+            onHover()
+        } else {
+            onUnhover()
+        }
     }
 
     Card(

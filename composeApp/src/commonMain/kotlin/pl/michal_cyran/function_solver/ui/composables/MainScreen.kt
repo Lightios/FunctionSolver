@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,9 +24,11 @@ import pl.michal_cyran.function_solver.ui.view_model.FunctionViewModel
 fun MainScreen(
     viewModel: FunctionViewModel
 ) {
-//    val viewModel = viewModel<FunctionViewModel>()
     val function by viewModel.function.collectAsStateWithLifecycle()
     val answer by viewModel.answer.collectAsStateWithLifecycle()
+    val userAnswers by viewModel.userAnswers.collectAsStateWithLifecycle()
+    val isAnswerCorrect by viewModel.isAnswerCorrect.collectAsStateWithLifecycle()
+    val checkedAnswer by viewModel.checkedAnswer.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier.fillMaxSize().background(
@@ -52,7 +57,13 @@ fun MainScreen(
                 function = function,
                 onAnswerHover = viewModel::setAnswer,
                 onAnswerUnhover = viewModel::clearAnswer,
+                userAnswers = userAnswers,
+                onAnswerChange = viewModel::setUserAnswer,
+                onCheckAnswer = viewModel::checkAnswer,
+                isAnswerCorrect = isAnswerCorrect,
+                checkedAnswer = checkedAnswer,
             )
         }
     }
+
 }

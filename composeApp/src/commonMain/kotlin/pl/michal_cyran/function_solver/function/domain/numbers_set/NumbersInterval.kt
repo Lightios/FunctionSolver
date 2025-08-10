@@ -80,4 +80,14 @@ data class NumbersInterval(
         // 1e > 2e
         return listOf(first)
     }
+
+    override fun toString(): String {
+        return buildString {
+            append(if (isStartIncluded) "[" else "(")
+            append(start.toInt())
+            append(", ")
+            append(end.toInt())
+            append(if (isEndIncluded) "]" else ")")
+        }
+    }
 }

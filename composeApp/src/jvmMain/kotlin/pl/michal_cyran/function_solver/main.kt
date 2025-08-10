@@ -8,7 +8,6 @@ fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
         title = "FunctionSolver",
-//        alwaysOnTop = true,
     ) {
         App(
             viewModel = FunctionViewModel()
