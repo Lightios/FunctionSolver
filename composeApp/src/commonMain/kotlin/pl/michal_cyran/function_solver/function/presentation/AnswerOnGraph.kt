@@ -31,8 +31,8 @@ fun DrawScope.answerOnGraph(
     maxY: Int,
     dashLength: Float = 20f,
     gapLength: Float = 40f,
-    dashesAnimOffset: Animatable<Float, *>,
-    circlesAnimRadius: Animatable<Float, *>,
+    dashesAnimOffset: Float,
+    circlesAnimRadius: Float,
 ) {
     if (answer.numbersContainers.isEmpty()) return
     val answerColor = if (answer.isX) Color(0xffFFA500) else Color.Green
@@ -47,7 +47,7 @@ fun DrawScope.answerOnGraph(
                         val y = size.height - (0f - minY) / (maxY - minY) * size.height
                         drawCircle(
                             color = answerColor,
-                            radius = circlesAnimRadius.value,
+                            radius = circlesAnimRadius,
                             center = Offset(x, y),
                             style = Stroke(width = 5f)
                         )
@@ -75,7 +75,7 @@ fun DrawScope.answerOnGraph(
             if (startingPoint.y == 0f) {
                 drawCircle(
                     color = answerColor,
-                    radius = circlesAnimRadius.value,
+                    radius = circlesAnimRadius,
                     center = Offset(startingX, size.height / 2),
                     style = Stroke(width = 5f)
                 )
@@ -83,7 +83,7 @@ fun DrawScope.answerOnGraph(
             if (endingPoint.y == 0f) {
                 drawCircle(
                     color = answerColor,
-                    radius = circlesAnimRadius.value,
+                    radius = circlesAnimRadius,
                     center = Offset(endingX, size.height / 2),
                     style = Stroke(width = 5f)
                 )
@@ -94,7 +94,7 @@ fun DrawScope.answerOnGraph(
                 start = Offset(startingX, startingY),
                 end = Offset(startingX, size.height / 2),
                 strokeWidth = 5f,
-                pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashLength, gapLength), dashesAnimOffset.value)
+                pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashLength, gapLength), dashesAnimOffset)
             )
 
             drawLine(
@@ -102,7 +102,7 @@ fun DrawScope.answerOnGraph(
                 start = Offset(endingX, endingY),
                 end = Offset(endingX, size.height / 2),
                 strokeWidth = 5f,
-                pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashLength, gapLength), dashesAnimOffset.value)
+                pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashLength, gapLength), dashesAnimOffset)
             )
 
 //            drawLine(
@@ -138,7 +138,7 @@ fun DrawScope.answerOnGraph(
                 start = Offset(startingX, startingY),
                 end = Offset(size.width / 2, startingY),
                 strokeWidth = 5f,
-                pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashLength, gapLength), dashesAnimOffset.value)
+                pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashLength, gapLength), dashesAnimOffset)
             )
 
             drawLine(
@@ -146,7 +146,7 @@ fun DrawScope.answerOnGraph(
                 start = Offset(endingX, endingY),
                 end = Offset(size.width / 2, endingY),
                 strokeWidth = 5f,
-                pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashLength, gapLength), dashesAnimOffset.value)
+                pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashLength, gapLength), dashesAnimOffset)
             )
         }
     }

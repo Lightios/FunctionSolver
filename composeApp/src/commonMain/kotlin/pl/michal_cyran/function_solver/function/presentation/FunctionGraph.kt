@@ -3,12 +3,16 @@ package pl.michal_cyran.function_solver.function.presentation
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -45,34 +49,25 @@ fun FunctionGraph(
     val dashLength = 20f
     val gapLength = 40f
     val totalLength = dashLength + gapLength
-    val dashesAnimOffset = remember { Animatable(0f) }
-    val circlesAnimRadius = remember { Animatable(0f) }
+    val infiniteTransition = rememberInfiniteTransition()
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            dashesAnimOffset.animateTo(
-                targetValue = totalLength,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(durationMillis = 1000, easing = LinearEasing),
-                    repeatMode = RepeatMode.Restart
-                )
-            )
-            dashesAnimOffset.snapTo(0f)
-        }
-    }
+    val dashesOffset by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = totalLength,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart,
+        ),
+    )
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            circlesAnimRadius.animateTo(
-                targetValue = 10f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(durationMillis = 1000, easing = LinearEasing),
-                    repeatMode = RepeatMode.Reverse
-                )
-            )
-            circlesAnimRadius.snapTo(0f)
-        }
-    }
+    val circlesRadius by infiniteTransition.animateFloat(
+        initialValue = 3f,
+        targetValue = 10f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
 
     Canvas(
         modifier = modifier
@@ -81,12 +76,6 @@ fun FunctionGraph(
             color = Colors.background,
             size = size,
         )
-//        val minX = ((function.intervals.flatMap { it.points }.minByOrNull { it.x })?.x?.toInt() ?: -10) - 1
-//        val maxX = ((function.intervals.flatMap { it.points }.maxByOrNull { it.x })?.x?.toInt() ?: 10) + 1
-//
-//        val minY = ((function.intervals.flatMap { it.points }.minByOrNull { it.y })?.y?.toInt() ?: -10) - 1
-//        val maxY = ((function.intervals.flatMap { it.points }.maxByOrNull { it.y })?.y?.toInt() ?: 10) + 1
-
         val xFarthest = function.intervals.flatMap { it.points }.maxOfOrNull { abs(it.x) } ?: 5
         val minX = -xFarthest.toInt() - 1
         val maxX = xFarthest.toInt() + 1
@@ -94,10 +83,6 @@ fun FunctionGraph(
         val yFarthest = function.intervals.flatMap { it.points }.maxOfOrNull { abs(it.y) } ?: 5
         val minY = -yFarthest.toInt() - 1
         val maxY = yFarthest.toInt() + 1
-//        val minX = -8
-//        val maxX = 8
-//        val minY = -6
-//        val maxY = 6
 
         drawGrid(minX = minX, maxX = maxX, minY = minY, maxY = maxY, size = size, textMeasurer = textMeasurer)
 
@@ -136,8 +121,8 @@ fun FunctionGraph(
                 maxY = maxY,
                 dashLength = dashLength,
                 gapLength = gapLength,
-                dashesAnimOffset = dashesAnimOffset,
-                circlesAnimRadius = circlesAnimRadius,
+                dashesAnimOffset = dashesOffset,
+                circlesAnimRadius = circlesRadius,
             )
         }
     }
