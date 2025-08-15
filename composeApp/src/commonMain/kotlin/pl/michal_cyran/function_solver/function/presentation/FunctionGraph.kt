@@ -86,30 +86,32 @@ fun FunctionGraph(
 
         drawGrid(minX = minX, maxX = maxX, minY = minY, maxY = maxY, size = size, textMeasurer = textMeasurer)
 
-        val points = mutableListOf<Point>()
+
         function.intervals.forEach { interval ->
+            val points = mutableListOf<Point>()
             interval.points.forEachIndexed { index, point ->
                 val x = (point.x - minX) / (maxX - minX) * size.width
                 val y = size.height - (point.y - minY) / (maxY - minY) * size.height
 
                 points.add(Point(x, y, including = point.including))
             }
+
+
+            for (i in 0 until points.size - 1) {
+                val start = points[i]
+                val end = points[i + 1]
+
+                drawLine(
+                    color = Colors.blue,
+                    start = Offset(start.x, start.y),
+                    end = Offset(end.x, end.y),
+                    strokeWidth = 4f
+                )
+            }
+            drawPoint(points.first())
+            drawPoint(points.last())
         }
 
-
-        for (i in 0 until points.size - 1) {
-            val start = points[i]
-            val end = points[i + 1]
-
-            drawLine(
-                color = Colors.blue,
-                start = Offset(start.x, start.y),
-                end = Offset(end.x, end.y),
-                strokeWidth = 4f
-            )
-        }
-        drawPoint(points.first())
-        drawPoint(points.last())
 
         answer?.let {
             answerOnGraph(
