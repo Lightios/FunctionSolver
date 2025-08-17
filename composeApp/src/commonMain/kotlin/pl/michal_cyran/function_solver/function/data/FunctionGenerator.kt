@@ -10,9 +10,9 @@ import kotlin.math.floor
 
 
 fun generateFunction(
-    oneInterval: Boolean = false,
+    continuous: Boolean = true,
 ): Function {
-    return if (oneInterval) {
+    return if (continuous) {
         generateOneIntervalFunction()
     } else {
         generateMultipleIntervalsFunction()

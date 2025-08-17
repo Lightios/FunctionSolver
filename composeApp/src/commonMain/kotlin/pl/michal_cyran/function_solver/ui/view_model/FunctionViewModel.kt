@@ -35,8 +35,12 @@ class FunctionViewModel: ViewModel() {
     val checkedAnswer = _checkedAnswer.asStateFlow()
 
 
-    fun regenerateFunction() {
-        _function.update { generateFunction() }
+    fun regenerateContinuousFunction() {
+        _function.update { generateFunction(continuous = true) }
+    }
+
+    fun regeneratePiecewiseFunction() {
+        _function.update { generateFunction(continuous = false) }
     }
 
     fun setAnswer(numbersIntervals: List<NumbersContainer>, isX: Boolean) {
@@ -58,6 +62,7 @@ class FunctionViewModel: ViewModel() {
 
     fun checkAnswer(parameter: Parameters) {
         val correctAnswer = parameter.getSolver()(_function.value).toText().trim()
+        print(correctAnswer)
         val userAnswer = _userAnswers.value[parameter]?.trim() ?: ""
 
         if (correctAnswer == userAnswer) {

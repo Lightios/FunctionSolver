@@ -9,7 +9,7 @@ fun generateMultipleIntervalsFunction(): Function {
     val starts = mutableListOf<Int>()
     val pointsCounts = mutableListOf<Int>()
 
-    val intervalsCount = (2..4).random()
+    val intervalsCount = (2..3).random()
 
     val intervals = mutableListOf<Interval>()
 

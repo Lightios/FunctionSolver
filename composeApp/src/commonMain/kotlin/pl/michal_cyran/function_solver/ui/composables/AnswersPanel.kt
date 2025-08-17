@@ -21,9 +21,7 @@ fun AnswersPanel(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth(1f)
-            .padding(8.dp),
+        modifier = modifier,
         horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
         verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(20.dp)
     ) {
@@ -34,7 +32,7 @@ fun AnswersPanel(
                 value = solution,
                 onHover = { onAnswerHover(solution, property.isX) },
                 onUnhover = onAnswerUnhover,
-                modifier = Modifier.fillMaxWidth(0.8f)
+                modifier = Modifier.fillMaxWidth(1f)
             )
         }
     }

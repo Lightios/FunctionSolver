@@ -39,12 +39,15 @@ fun MainScreen(
     ) {
         Header(
             modifier = Modifier.fillMaxWidth(1f),
-            onGenerateFunction = {
-                viewModel.regenerateFunction()
+            onGenerateContinuousFunction = {
+                viewModel.regenerateContinuousFunction()
+            },
+            onGeneratePiecewiseFunction = {
+                viewModel.regeneratePiecewiseFunction()
             }
         )
         Row(
-            modifier = Modifier.fillMaxWidth(0.9f),
+            modifier = Modifier.fillMaxWidth(0.95f),
             horizontalArrangement = Arrangement.spacedBy(40.dp),
         ) {
             LeftPanel(
@@ -53,7 +56,7 @@ fun MainScreen(
                 answer = answer,
             )
             RightPanel(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1.2f),
                 function = function,
                 onAnswerHover = viewModel::setAnswer,
                 onAnswerUnhover = viewModel::clearAnswer,

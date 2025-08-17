@@ -1,5 +1,6 @@
 package pl.michal_cyran.function_solver.ui.composables
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -15,8 +16,9 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun Header(
+    onGenerateContinuousFunction: () -> Unit,
+    onGeneratePiecewiseFunction: () -> Unit,
     modifier: Modifier = Modifier,
-    onGenerateFunction: () -> Unit,
 ) {
     Card(
         modifier = modifier,
@@ -30,7 +32,8 @@ fun Header(
     ) {
         Row(
             modifier.padding(8.dp).padding(horizontal = 100.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Text(
                 text = "Odczytywanie własności funkcji z wykresu",
@@ -41,9 +44,15 @@ fun Header(
             Spacer(modifier.weight(1f))
 
             Button(
-                onClick = onGenerateFunction,
+                onClick = onGenerateContinuousFunction,
             ) {
-                Text(text = "Wygeneruj nową funkcję")
+                Text(text = "Wygeneruj ciągłą funkcję")
+            }
+
+            Button(
+                onClick = onGeneratePiecewiseFunction,
+            ) {
+                Text(text = "Wygeneruj funkcję przedziałową")
             }
         }
     }

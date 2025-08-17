@@ -58,13 +58,19 @@ fun DrawScope.answerOnGraph(
             val a = numbersSet.start
             val b = numbersSet.end
 
-            val startingPoint = function.intervals.flatMap {
-                it.points.filter { point -> point.x == a }
-            }.first()
+            println(numbersSet)
 
-            val endingPoint = function.intervals.flatMap {
+            val startingPoint = (function.intervals.flatMap {
+                it.points.filter { point -> point.x == a && point.including == numbersSet.isStartIncluded }
+            } + function.intervals.flatMap {
+                it.points.filter { point -> point.x == a }
+            }).first()
+
+            val endingPoint = (function.intervals.flatMap {
+                it.points.filter { point -> point.x == b && point.including == numbersSet.isEndIncluded }
+            } + function.intervals.flatMap {
                 it.points.filter { point -> point.x == b }
-            }.last()
+            }).first()
 
             val startingX = (startingPoint.x - minX) / (maxX - minX) * size.width
             val startingY = size.height - (startingPoint.y - minY) / (maxY - minY) * size.height
