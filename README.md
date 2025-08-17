@@ -1,20 +1,48 @@
-This is a Kotlin Multiplatform project targeting Web, Desktop (JVM).
+# 📦 Function Solver
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+> **A web application for practicing reading properties of functions from their graphs**
 
+[👉 Live Demo](https://lightios.github.io/FunctionSolver/)
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
+---
 
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+## 🌟 Features
 
-You can open the web application by running the `:composeApp:wasmJsBrowserDevelopmentRun` Gradle task.
+- 🔢 Generation of continuous and piecewise functions
+- ✍️ Input and automatic evaluation of answers
+- 📘 Access to ready-made solutions
+- 📊 Visualization of solution steps
+
+---
+
+## ℹ️ Overview
+
+I am a math tutor, and this application was created for my students so they can **effectively practice interpreting properties of functions from graphs**.  
+With Function Solver, you can practice:
+- finding zeros of functions,
+- identifying monotonicity,
+- evaluating function values,
+- locating local extrema,
+- and other essential properties.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Kotlin Multiplatform** – for cross-platform development
+- **Compose Multiplatform** – for building the UI
+- **GitHub Pages** – for hosting the web version
+
+The same core module will also be available on **mobile devices** as part of my commercial application **DayMath**.
+
+---
+
+## 📷 Screenshots
+
+![Main view](screenshots/main.png)
+
+---
+
+## 📄 License
+© All rights reserved.
+This project was created for educational purposes and will also be used as part of the DayMath commercial application.
