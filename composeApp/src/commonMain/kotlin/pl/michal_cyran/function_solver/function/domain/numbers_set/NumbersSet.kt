@@ -4,6 +4,6 @@ data class NumbersSet(
     val numbers: List<Float>,
 ): NumbersContainer() {
     override fun toString(): String {
-        return numbers.joinToString(", ", "{", "}")
+        return numbers.map { it.toInt() }.joinToString(", ", "{", "}")
     }
 }

@@ -3,7 +3,7 @@ package pl.michal_cyran.function_solver.function.domain.numbers_set
 fun List<NumbersInterval>.normalize(): List<NumbersInterval> {
     if (this.isEmpty()) return emptyList()
 
-    val sortedIntervals = this.sortedBy { it.start }.toMutableList()
+    var sortedIntervals = this.sortedBy { it.start }.toMutableList()
     val normalizedIntervals = mutableListOf<NumbersInterval>()
 
     val result = mutableListOf<NumbersInterval>()
@@ -14,9 +14,9 @@ fun List<NumbersInterval>.normalize(): List<NumbersInterval> {
         val sum = sortedIntervals[i] + sortedIntervals[i + 1]
         if (sum.size == 1) {
             needsToRestart = true
-            sortedIntervals.drop(i)
-            sortedIntervals.drop(i + 1)
-            normalizedIntervals.add(i, sum.first())
+            sortedIntervals.removeAt(i)
+            sortedIntervals.removeAt(i) // same index bcs everything shifted left
+            sortedIntervals.add(i, sum.first())
         } else {
             i++
         }
@@ -27,5 +27,5 @@ fun List<NumbersInterval>.normalize(): List<NumbersInterval> {
         }
     }
 
-    return normalizedIntervals
+    return sortedIntervals
 }

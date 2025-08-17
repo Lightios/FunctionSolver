@@ -2,6 +2,7 @@ package pl.michal_cyran.function_solver.function.domain.parameters
 
 import pl.michal_cyran.function_solver.function.domain.Function
 import pl.michal_cyran.function_solver.function.domain.numbers_set.NumbersInterval
+import pl.michal_cyran.function_solver.function.domain.numbers_set.normalize
 
 class Monotonicity(
     val function: Function
@@ -68,6 +69,6 @@ class Monotonicity(
             result.add(previousSet)
         }
 
-        return result
+        return result.normalize()
     }
 }

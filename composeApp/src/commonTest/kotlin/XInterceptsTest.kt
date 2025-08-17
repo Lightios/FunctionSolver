@@ -1,5 +1,6 @@
 import pl.michal_cyran.function_solver.function.data.generateFunctionFromPoints
 import pl.michal_cyran.function_solver.function.domain.Point
+import pl.michal_cyran.function_solver.function.domain.numbers_set.NumbersSet
 import pl.michal_cyran.function_solver.function.domain.parameters.XInterceptions
 import kotlin.test.Test
 import kotlin.test.assertContains
@@ -18,7 +19,7 @@ class XInterceptsTest {
         val xInterceptions = XInterceptions(function).get()
 
         assertEquals(1, xInterceptions.size)
-        assertContains(xInterceptions, 1f)
+        assertContains(xInterceptions, NumbersSet(listOf(1f)))
     }
 
     @Test
@@ -35,8 +36,8 @@ class XInterceptsTest {
         val xInterceptions = XInterceptions(function).get()
 
         assertEquals(2, xInterceptions.size)
-        assertContains(xInterceptions, 1f)
-        assertContains(xInterceptions, 3f)
+        assertContains(xInterceptions, NumbersSet(listOf(1f)))
+        assertContains(xInterceptions, NumbersSet(listOf(3f)))
     }
 
     @Test
