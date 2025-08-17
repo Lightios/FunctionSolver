@@ -1,4 +1,6 @@
 import pl.michal_cyran.function_solver.function.data.generateFunctionFromPoints
+import pl.michal_cyran.function_solver.function.domain.Function
+import pl.michal_cyran.function_solver.function.domain.Interval
 import pl.michal_cyran.function_solver.function.domain.Point
 import pl.michal_cyran.function_solver.function.domain.numbers_set.NumbersSet
 import pl.michal_cyran.function_solver.function.domain.parameters.XInterceptions
@@ -52,5 +54,23 @@ class XInterceptsTest {
         val xInterceptions = XInterceptions(function).get()
 
         assertEquals(0, xInterceptions.size)
+    }
+
+    @Test
+    fun `Not including X intercepts on the ends`() {
+        val function = Function(
+            listOf(
+                Interval(
+                    listOf(
+                        Point(0f, 0f, including = false),
+                        Point(1f, 1f, including = true),
+                        Point(2f, 0f, including = false),
+                    )
+                )
+            )
+        )
+
+    val xInterceptions = XInterceptions(function).get()
+        assertEquals(0, xInterceptions[0].numbers.size)
     }
 }

@@ -10,8 +10,6 @@ class XInterceptions(
         val results = mutableListOf<Float>()
 
         for (interval in function.intervals) {
-
-
             for (i in 0 until interval.points.size - 1) {
                 val point1 = interval.points[i]
                 val point2 = interval.points[i + 1]
@@ -26,6 +24,14 @@ class XInterceptions(
                 val a = (y2 - y1) / (x2 - x1)
                 val b = y1 - a * x1
                 val xIntercept = -b / a
+
+                if (xIntercept == x1 && !point1.including) {
+                    continue // Skip if the x-intercept is exactly at the first point and it's not included
+                }
+
+                if (xIntercept == x2 && !point2.including) {
+                    continue // Skip if the x-intercept is exactly at the second point and it's not included
+                }
 
                 results.add(xIntercept)
             }
