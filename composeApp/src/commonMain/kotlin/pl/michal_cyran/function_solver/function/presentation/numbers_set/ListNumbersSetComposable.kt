@@ -49,7 +49,7 @@ fun ListNumbersSetComposable(
 
             if (i < numbersContainers.size - 1) {
                 Text(
-                    text = "∪",
+                    text = "U",
                     style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(horizontal = 4.dp)
                 )
