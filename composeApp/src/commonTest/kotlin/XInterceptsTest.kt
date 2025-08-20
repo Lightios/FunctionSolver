@@ -2,6 +2,7 @@ import pl.michal_cyran.function_solver.function.data.generateFunctionFromPoints
 import pl.michal_cyran.function_solver.function.domain.Function
 import pl.michal_cyran.function_solver.function.domain.Interval
 import pl.michal_cyran.function_solver.function.domain.Point
+import pl.michal_cyran.function_solver.function.domain.numbers_set.NumbersInterval
 import pl.michal_cyran.function_solver.function.domain.numbers_set.NumbersSet
 import pl.michal_cyran.function_solver.function.domain.parameters.XInterceptions
 import kotlin.test.Test
@@ -70,7 +71,32 @@ class XInterceptsTest {
             )
         )
 
-    val xInterceptions = XInterceptions(function).get()
-        assertEquals(0, xInterceptions[0].numbers.size)
+        val xInterceptions = XInterceptions(function).get()
+
+        xInterceptions.forEach {
+            if (it is NumbersSet) {
+                assertEquals(1, it.numbers.size)
+            } else {
+                assertEquals(expected = true, actual = false)
+            }
+        }
+    }
+
+    @Test
+    fun `Constant function at 0 value`() {
+        val function = generateFunctionFromPoints(
+            listOf(
+                Point(0f, 0f),
+                Point(1f, 0f),
+                Point(2f, 0f)
+            )
+        )
+
+        val xInterceptions = XInterceptions(function).get()
+        assertEquals(1, xInterceptions.size)
+        assertContains(xInterceptions, NumbersInterval(0f, 2f,
+            isStartIncluded = true,
+            isEndIncluded = true
+        ))
     }
 }
