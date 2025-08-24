@@ -1,31 +1,29 @@
 package pl.michal_cyran.function_solver.function.domain.numbers_set
 
-fun List<NumbersInterval>.normalize(): List<NumbersInterval> {
-    if (this.isEmpty()) return emptyList()
+fun List<NumbersContainer>.normalize(): List<NumbersContainer> {
+    val intervals = this.filterIsInstance<NumbersInterval>().toList().normalize()
+    val set = this.filterIsInstance<NumbersSet>().toList().normalize()
 
-    var sortedIntervals = this.sortedBy { it.start }.toMutableList()
-    val normalizedIntervals = mutableListOf<NumbersInterval>()
+    val result: MutableList<NumbersContainer> = intervals.toMutableList()
 
-    val result = mutableListOf<NumbersInterval>()
-    var needsToRestart = false
-    var i = 0
 
-    while (i < sortedIntervals.size - 1) {
-        val sum = sortedIntervals[i] + sortedIntervals[i + 1]
-        if (sum.size == 1) {
-            needsToRestart = true
-            sortedIntervals.removeAt(i)
-            sortedIntervals.removeAt(i) // same index bcs everything shifted left
-            sortedIntervals.add(i, sum.first())
-        } else {
-            i++
+
+    if (set != null) {
+        val reducedNumbers = mutableListOf<Float>()
+        for (number in set.numbers) {
+            if (!intervals.any { interval ->
+                    (number > interval.start && number < interval.end) ||
+                            (number == interval.start && interval.isStartIncluded) ||
+                            (number == interval.end && interval.isEndIncluded)
+                }
+            ) {
+                reducedNumbers.add(number)
+            }
         }
 
-        if (needsToRestart) {
-            i = 0
-            needsToRestart = false
-        }
+        if (reducedNumbers.isNotEmpty())
+            result += NumbersSet(reducedNumbers)
     }
 
-    return sortedIntervals
+    return result
 }

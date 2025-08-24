@@ -180,6 +180,9 @@ fun DrawScope.drawGrid(
 
     for (i in minX..maxX) {
         val xPosition = size.width / (maxX - minX) * (i - minX) - 5f
+
+        if (size.width < 20 || size.height < 20) continue
+
         drawText(
             textMeasurer = textMeasurer,
             text = i.toString(),
@@ -195,6 +198,7 @@ fun DrawScope.drawGrid(
 
     for (i in minY..maxY) {
         val yPosition = (size.height / (maxY - minY) * (i - minY) + 5f).coerceIn(0f, size.height)
+        if (size.width < 20 || size.height < 20) continue
         drawText(
             textMeasurer = textMeasurer,
             text = (i * -1).toString(),

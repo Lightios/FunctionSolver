@@ -38,9 +38,8 @@ class XInterceptsTest {
         )
         val xInterceptions = XInterceptions(function).get()
 
-        assertEquals(2, xInterceptions.size)
-        assertContains(xInterceptions, NumbersSet(listOf(1f)))
-        assertContains(xInterceptions, NumbersSet(listOf(3f)))
+        assertEquals(1, xInterceptions.size)
+        assertContains(xInterceptions, NumbersSet(listOf(1f, 3f)))
     }
 
     @Test
@@ -98,5 +97,31 @@ class XInterceptsTest {
             isStartIncluded = true,
             isEndIncluded = true
         ))
+    }
+
+    @Test
+    fun `Two intervals with constant fragment`() {
+        val function = Function(
+            listOf(
+                Interval(
+                    listOf(
+                        Point(0f, -1f),
+                        Point(1f, 0f),
+                        Point(2f, 1f)
+                    )
+                ),
+                Interval(
+                    listOf(
+                        Point(2f, 0f),
+                        Point(3f, 0f),
+                        Point(4f, 1f)
+                    )
+                )
+            )
+        )
+
+        val xInterceptions = XInterceptions(function).get()
+        assertEquals(2, xInterceptions.size)
+        assertContains(xInterceptions, NumbersSet(listOf(1f)))
     }
 }

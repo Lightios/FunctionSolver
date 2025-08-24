@@ -4,6 +4,7 @@ import pl.michal_cyran.function_solver.function.domain.Function
 import pl.michal_cyran.function_solver.function.domain.numbers_set.NumbersContainer
 import pl.michal_cyran.function_solver.function.domain.numbers_set.NumbersInterval
 import pl.michal_cyran.function_solver.function.domain.numbers_set.NumbersSet
+import pl.michal_cyran.function_solver.function.domain.numbers_set.normalize
 
 class XInterceptions(
         val function: Function
@@ -55,12 +56,18 @@ class XInterceptions(
         }
 
         val distinctPoints = points.distinct().sorted()
-        var result: Any
-
-
-
-        return result + NumbersSet(
-            points
+        val numbersSet = NumbersSet(
+            distinctPoints
         )
+
+        val result = if (distinctPoints.isEmpty()) {
+            intervals
+        } else {
+            listOf<NumbersContainer>(
+                numbersSet,
+            ) + intervals
+        }
+
+        return result.normalize()
     }
 }

@@ -58,8 +58,6 @@ fun DrawScope.answerOnGraph(
             val a = numbersSet.start
             val b = numbersSet.end
 
-            println(numbersSet)
-
             val startingPoint = (function.intervals.flatMap {
                 it.points.filter { point -> point.x == a && point.including == numbersSet.isStartIncluded }
             } + function.intervals.flatMap {
