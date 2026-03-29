@@ -1,5 +1,6 @@
 package pl.michal_cyran.function_solver.ui.composables
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,8 +23,7 @@ fun AnswersPanel(
 ) {
     Column(
         modifier = modifier,
-        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
-        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Parameters.entries.forEach { property ->
             val solution = property.getSolver()(function)
@@ -32,7 +32,7 @@ fun AnswersPanel(
                 value = solution,
                 onHover = { onAnswerHover(solution, property.isX) },
                 onUnhover = onAnswerUnhover,
-                modifier = Modifier.fillMaxWidth(1f)
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }

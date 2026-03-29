@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 import pl.michal_cyran.function_solver.function.domain.numbers_set.NumbersContainer
 import pl.michal_cyran.function_solver.function.domain.numbers_set.NumbersInterval
 import pl.michal_cyran.function_solver.function.domain.numbers_set.NumbersSet
+import pl.michal_cyran.function_solver.theme.AppColors
 
 @Composable
 fun ListNumbersSetComposable(
@@ -24,6 +25,7 @@ fun ListNumbersSetComposable(
             Text(
                 text = "Brak",
                 style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
+                color = AppColors.TextMuted,
                 modifier = Modifier.padding(horizontal = 4.dp)
             )
             return@Row
@@ -51,6 +53,7 @@ fun ListNumbersSetComposable(
                 Text(
                     text = "U",
                     style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
+                    color = AppColors.TextMuted,
                     modifier = Modifier.padding(horizontal = 4.dp)
                 )
             }

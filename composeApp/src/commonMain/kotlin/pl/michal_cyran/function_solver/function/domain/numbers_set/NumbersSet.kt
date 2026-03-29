@@ -6,4 +6,6 @@ data class NumbersSet(
     override fun toString(): String {
         return numbers.map { it.toInt() }.joinToString(", ", "{", "}")
     }
+
+    constructor(vararg numbers: Float): this(numbers.toList())
 }

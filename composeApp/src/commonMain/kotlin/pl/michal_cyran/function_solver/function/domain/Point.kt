@@ -4,4 +4,6 @@ data class Point(
     val x: Float,
     val y: Float,
     val including: Boolean = true,
-)
+) {
+    constructor(x: Int, y: Int): this(x.toFloat(), y.toFloat())
+}

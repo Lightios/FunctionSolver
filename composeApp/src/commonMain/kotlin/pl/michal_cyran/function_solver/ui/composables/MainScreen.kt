@@ -17,13 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import pl.michal_cyran.function_solver.theme.AppColors
 import pl.michal_cyran.function_solver.ui.view_model.FunctionViewModel
 
 
 @Composable
-fun MainScreen(
-    viewModel: FunctionViewModel
-) {
+fun MainScreen(viewModel: FunctionViewModel) {
     val function by viewModel.function.collectAsStateWithLifecycle()
     val answer by viewModel.answer.collectAsStateWithLifecycle()
     val userAnswers by viewModel.userAnswers.collectAsStateWithLifecycle()
@@ -31,24 +30,22 @@ fun MainScreen(
     val checkedAnswer by viewModel.checkedAnswer.collectAsStateWithLifecycle()
 
     Column(
-        modifier = Modifier.fillMaxSize().background(
-            MaterialTheme.colorScheme.background
-        ),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier
+            .fillMaxSize()
+            .background(AppColors.Background),
+        verticalArrangement = Arrangement.spacedBy(0.dp),
     ) {
         Header(
-            modifier = Modifier.fillMaxWidth(1f),
-            onGenerateContinuousFunction = {
-                viewModel.regenerateContinuousFunction()
-            },
-            onGeneratePiecewiseFunction = {
-                viewModel.regeneratePiecewiseFunction()
-            }
+            modifier = Modifier.fillMaxWidth(),
+            onGenerateContinuousFunction = { viewModel.regenerateContinuousFunction() },
+            onGeneratePiecewiseFunction = { viewModel.regeneratePiecewiseFunction() }
         )
+
         Row(
-            modifier = Modifier.fillMaxWidth(0.95f),
-            horizontalArrangement = Arrangement.spacedBy(40.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             LeftPanel(
                 modifier = Modifier.weight(2f),
@@ -68,5 +65,4 @@ fun MainScreen(
             )
         }
     }
-
 }

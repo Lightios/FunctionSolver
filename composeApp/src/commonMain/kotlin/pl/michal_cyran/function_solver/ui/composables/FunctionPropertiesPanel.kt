@@ -1,5 +1,6 @@
 package pl.michal_cyran.function_solver.ui.composables
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,49 +31,20 @@ fun FunctionPropertiesPanel(
     checkedAnswer: Parameters? = null,
     isAnswerCorrect: Boolean? = null,
 ) {
-    var answers by rememberSaveable { mutableStateOf(
-        mapOf(
-            *Parameters.entries.map { it to "" }.toTypedArray()
-        )
-    ) }
-
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-        )
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth(1f)
-                .padding(20.dp),
-            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
-            verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(20.dp)
-        ) {
-
-            Text(
-                text = "Własności funkcji",
-                modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.titleLarge
+        Parameters.entries.forEach { parameter ->
+            FunctionProperty(
+                propertyName = parameter.displayPolishName,
+                value = userAnswers[parameter] ?: "",
+                onValueChange = { onAnswerChange(parameter, it) },
+                onCheckAnswer = { onCheckAnswer(parameter) },
+                isAnswerCorrect = isAnswerCorrect,
+                isThisChecked = checkedAnswer == parameter,
+                modifier = Modifier.fillMaxWidth()
             )
-            for (parameter in Parameters.entries) {
-                FunctionProperty(
-                    propertyName = parameter.displayPolishName,
-                    value = userAnswers[parameter] ?: "",
-                    onValueChange = { newValue ->
-                        onAnswerChange(
-                            parameter,
-                            newValue
-                        )
-                    },
-                    onCheckAnswer = {
-                        onCheckAnswer(parameter)
-                    },
-                    isAnswerCorrect = isAnswerCorrect,
-                    isThisChecked = checkedAnswer == parameter,
-                    modifier = Modifier.fillMaxWidth(0.8f)
-                )
-            }
         }
     }
 }

@@ -5,6 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import pl.michal_cyran.function_solver.function.domain.numbers_set.NumbersSet
+import pl.michal_cyran.function_solver.theme.AppColors
 
 @Composable
 fun NumbersSetComposable(
@@ -17,7 +18,8 @@ fun NumbersSetComposable(
         Text(
             text = string,
             modifier = modifier,
-            style = androidx.compose.material3.MaterialTheme.typography.titleLarge
+            style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
+            color = AppColors.TextMuted,
         )
     }
 }

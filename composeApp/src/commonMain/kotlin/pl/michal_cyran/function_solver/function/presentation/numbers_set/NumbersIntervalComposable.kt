@@ -6,6 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import pl.michal_cyran.function_solver.function.domain.numbers_set.NumbersInterval
+import pl.michal_cyran.function_solver.theme.AppColors
 
 @Composable
 fun NumbersIntervalComposable(
@@ -30,7 +31,8 @@ fun NumbersIntervalComposable(
 
         Text(
             text = "$leftBracket${numbersInterval.start.toInt()}, ${numbersInterval.end.toInt()}$rightBracket",
-            style = MaterialTheme.typography.titleLarge
+            style = MaterialTheme.typography.titleLarge,
+            color = AppColors.TextMuted,
         )
     }
 }

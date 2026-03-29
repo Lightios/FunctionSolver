@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -22,176 +23,198 @@ import pl.michal_cyran.function_solver.function.domain.answer.Answer
 import pl.michal_cyran.function_solver.function.domain.numbers_set.NumbersInterval
 import pl.michal_cyran.function_solver.function.domain.numbers_set.NumbersSet
 
-fun DrawScope.answerOnGraph(
+data class ResolvedAnswerSegment(
+    val startX: Float,
+    val startY: Float,
+    val endX: Float,
+    val endY: Float,
+    val startOnAxis: Boolean,   // startY == 0 (dla isX)
+    val endOnAxis: Boolean,     // endY == 0 (dla isX)
+)
+
+data class ResolvedAnswer(
+    val isX: Boolean,
+    val color: Color,
+    val segments: List<ResolvedAnswerSegment>,
+    val pointsOnAxis: List<Float>,          // dla NumbersSet (isX, nie-interval)
+    val dashIntervals: FloatArray,
+)
+
+@Composable
+fun rememberResolvedAnswer(
     function: Function,
-    answer: Answer,
-    minX: Int,
-    maxX: Int,
-    minY: Int,
-    maxY: Int,
+    answer: Answer?,
+    minX: Int, maxX: Int,
+    minY: Int, maxY: Int,
+    canvasSize: Size,
     dashLength: Float = 20f,
     gapLength: Float = 40f,
+): ResolvedAnswer? {
+    return remember(answer, function, canvasSize) {
+        if (answer == null || answer.numbersContainers.isEmpty()) return@remember null
+        resolveAnswer(
+            function, answer,
+            minX, maxX, minY, maxY,
+            canvasSize, dashLength, gapLength,
+        )
+    }
+}
+
+private fun resolveAnswer(
+    function: Function,
+    answer: Answer,
+    minX: Int, maxX: Int,
+    minY: Int, maxY: Int,
+    canvasSize: Size,
+    dashLength: Float,
+    gapLength: Float,
+): ResolvedAnswer {
+    val color = if (answer.isX) Color(0xffFFA500) else Color.Green
+    val W = canvasSize.width
+    val H = canvasSize.height
+
+    fun toCanvasX(v: Float) = (v - minX) / (maxX - minX) * W
+    fun toCanvasY(v: Float) = H - (v - minY) / (maxY - minY) * H
+
+    // Spłaszczone listy punktów – raz na answer
+    val allPoints = function.intervals.flatMap { it.points }
+
+    val segments = mutableListOf<ResolvedAnswerSegment>()
+    val axisPoints = mutableListOf<Float>()
+
+    if (answer.isX) {
+        for (container in answer.numbersContainers) {
+            when (container) {
+                is NumbersSet -> {
+                    container.numbers.forEach { x ->
+                        axisPoints += toCanvasX(x)
+                    }
+                }
+                is NumbersInterval -> {
+                    val a = container.start
+                    val b = container.end
+
+                    // Priorytet: pasuje i inkludowanie, fallback: tylko x
+                    val startPt = allPoints.firstOrNull { it.x == a && it.including == container.isStartIncluded }
+                        ?: allPoints.first { it.x == a }
+
+                    val endPt = allPoints.firstOrNull { it.x == b && it.including == container.isEndIncluded }
+                        ?: allPoints.first { it.x == b }
+
+                    segments += ResolvedAnswerSegment(
+                        startX = toCanvasX(startPt.x),
+                        startY = toCanvasY(startPt.y),
+                        endX   = toCanvasX(endPt.x),
+                        endY   = toCanvasY(endPt.y),
+                        startOnAxis = startPt.y == 0f,
+                        endOnAxis   = endPt.y == 0f,
+                    )
+                }
+            }
+        }
+    } else {
+        for (container in answer.numbersContainers) {
+            if (container !is NumbersInterval) continue
+            val a = container.start
+            val b = container.end
+
+            val startPt = allPoints.first { it.y == a }
+            val endPt   = allPoints.last  { it.y == b }
+
+            segments += ResolvedAnswerSegment(
+                startX = toCanvasX(startPt.x),
+                startY = toCanvasY(startPt.y),
+                endX   = toCanvasX(endPt.x),
+                endY   = toCanvasY(endPt.y),
+                startOnAxis = false,
+                endOnAxis   = false,
+            )
+        }
+    }
+
+    return ResolvedAnswer(
+        isX          = answer.isX,
+        color        = color,
+        segments     = segments,
+        pointsOnAxis = axisPoints,
+        // FloatArray tworzony raz, nie w każdej klatce
+        dashIntervals = floatArrayOf(dashLength, gapLength),
+    )
+}
+
+fun DrawScope.drawResolvedAnswer(
+    resolved: ResolvedAnswer,
     dashesAnimOffset: Float,
     circlesAnimRadius: Float,
 ) {
-    if (answer.numbersContainers.isEmpty()) return
-    val answerColor = if (answer.isX) Color(0xffFFA500) else Color.Green
+    val axisY   = size.height / 2f
+    val axisX   = size.width  / 2f
+    val stroke  = 5f
 
+    val pathEffect = PathEffect.dashPathEffect(resolved.dashIntervals, dashesAnimOffset)
 
-    if (answer.isX) {
-        for (numbersSet in answer.numbersContainers) {
-            if (numbersSet !is NumbersInterval) {
-                if (numbersSet is NumbersSet) {
-                    numbersSet.numbers.forEach {
-                        val x = (it - minX) / (maxX - minX) * size.width
-                        val y = size.height - (0f - minY) / (maxY - minY) * size.height
-                        drawCircle(
-                            color = answerColor,
-                            radius = circlesAnimRadius,
-                            center = Offset(x, y),
-                            style = Stroke(width = 5f)
-                        )
-                    }
-                }
-                return
-            }
-            val a = numbersSet.start
-            val b = numbersSet.end
+    if (resolved.isX) {
+        // Animowane kółka dla NumbersSet
+        resolved.pointsOnAxis.forEach { x ->
+            drawCircle(
+                color  = resolved.color,
+                radius = circlesAnimRadius,
+                center = Offset(x, axisY),
+                style  = Stroke(width = stroke)
+            )
+        }
 
-            val startingPoint = (function.intervals.flatMap {
-                it.points.filter { point -> point.x == a && point.including == numbersSet.isStartIncluded }
-            } + function.intervals.flatMap {
-                it.points.filter { point -> point.x == a }
-            }).first()
-
-            val endingPoint = (function.intervals.flatMap {
-                it.points.filter { point -> point.x == b && point.including == numbersSet.isEndIncluded }
-            } + function.intervals.flatMap {
-                it.points.filter { point -> point.x == b }
-            }).first()
-
-            val startingX = (startingPoint.x - minX) / (maxX - minX) * size.width
-            val startingY = size.height - (startingPoint.y - minY) / (maxY - minY) * size.height
-
-            val endingX = (endingPoint.x - minX) / (maxX - minX) * size.width
-            val endingY = size.height - (endingPoint.y - minY) / (maxY - minY) * size.height
-
-            if (startingPoint.y == 0f) {
+        // Przerywane linie dla NumbersInterval
+        resolved.segments.forEach { seg ->
+            if (seg.startOnAxis) {
                 drawCircle(
-                    color = answerColor,
+                    color  = resolved.color,
                     radius = circlesAnimRadius,
-                    center = Offset(startingX, size.height / 2),
-                    style = Stroke(width = 5f)
+                    center = Offset(seg.startX, axisY),
+                    style  = Stroke(width = stroke)
                 )
             }
-            if (endingPoint.y == 0f) {
+            if (seg.endOnAxis) {
                 drawCircle(
-                    color = answerColor,
+                    color  = resolved.color,
                     radius = circlesAnimRadius,
-                    center = Offset(endingX, size.height / 2),
-                    style = Stroke(width = 5f)
+                    center = Offset(seg.endX, axisY),
+                    style  = Stroke(width = stroke)
                 )
             }
 
             drawLine(
-                color = answerColor,
-                start = Offset(startingX, startingY),
-                end = Offset(startingX, size.height / 2),
-                strokeWidth = 5f,
-                pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashLength, gapLength), dashesAnimOffset)
+                color       = resolved.color,
+                start       = Offset(seg.startX, seg.startY),
+                end         = Offset(seg.startX, axisY),
+                strokeWidth = stroke,
+                pathEffect  = pathEffect,
             )
-
             drawLine(
-                color = answerColor,
-                start = Offset(endingX, endingY),
-                end = Offset(endingX, size.height / 2),
-                strokeWidth = 5f,
-                pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashLength, gapLength), dashesAnimOffset)
+                color       = resolved.color,
+                start       = Offset(seg.endX, seg.endY),
+                end         = Offset(seg.endX, axisY),
+                strokeWidth = stroke,
+                pathEffect  = pathEffect,
             )
-
-//            drawLine(
-//                color = answerColor,
-//                start = Offset(startingX, startingY),
-//                end = Offset(endingX, endingY),
-//                strokeWidth = 5f,
-//                pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashLength, gapLength), dashesAnimOffset.value)
-//            )
         }
     } else {
-        for (numbersSet in answer.numbersContainers) {
-            if (numbersSet !is NumbersInterval) continue
-            val a = numbersSet.start
-            val b = numbersSet.end
-
-            val startingPoint = function.intervals.flatMap {
-                it.points.filter { point -> point.y == a }
-            }.first()
-
-            val endingPoint = function.intervals.flatMap {
-                it.points.filter { point -> point.y == b }
-            }.last()
-
-            val startingX = (startingPoint.x - minX) / (maxX - minX) * size.width
-            val startingY = size.height - (startingPoint.y - minY) / (maxY - minY) * size.height
-
-            val endingX = (endingPoint.x - minX) / (maxX - minX) * size.width
-            val endingY = size.height - (endingPoint.y - minY) / (maxY - minY) * size.height
-
+        resolved.segments.forEach { seg ->
             drawLine(
-                color = answerColor,
-                start = Offset(startingX, startingY),
-                end = Offset(size.width / 2, startingY),
-                strokeWidth = 5f,
-                pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashLength, gapLength), dashesAnimOffset)
+                color       = resolved.color,
+                start       = Offset(seg.startX, seg.startY),
+                end         = Offset(axisX, seg.startY),
+                strokeWidth = stroke,
+                pathEffect  = pathEffect,
             )
-
             drawLine(
-                color = answerColor,
-                start = Offset(endingX, endingY),
-                end = Offset(size.width / 2, endingY),
-                strokeWidth = 5f,
-                pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashLength, gapLength), dashesAnimOffset)
+                color       = resolved.color,
+                start       = Offset(seg.endX, seg.endY),
+                end         = Offset(axisX, seg.endY),
+                strokeWidth = stroke,
+                pathEffect  = pathEffect,
             )
         }
     }
-
-
 }
 
-@Composable
-fun AnimatedDashedLines() {
-    val dashLength = 20f
-    val gapLength = 40f
-    val totalLength = dashLength + gapLength
-
-    val animOffset = remember { Animatable(0f) }
-
-    LaunchedEffect(Unit) {
-        while (true) {
-            animOffset.animateTo(
-                targetValue = totalLength,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(durationMillis = 1000, easing = LinearEasing),
-                    repeatMode = RepeatMode.Restart
-                )
-            )
-            animOffset.snapTo(0f)
-        }
-    }
-
-    Canvas(modifier = Modifier.fillMaxSize()) {
-        val lineCount = (size.height / totalLength).toInt() + 2
-        for (i in 0 until lineCount) {
-            val y = i * totalLength
-            if (y > size.height) continue
-            drawLine(
-                color = Color.Red,
-                start = Offset(0f, y),
-                end = Offset(size.width, y),
-                strokeWidth = 4.dp.toPx(),
-                pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashLength, gapLength), animOffset.value)
-            )
-        }
-    }
-
-}

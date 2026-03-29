@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -35,6 +37,7 @@ import org.jetbrains.skia.FontWeight
 import pl.michal_cyran.function_solver.function.domain.Function
 import pl.michal_cyran.function_solver.function.domain.Point
 import pl.michal_cyran.function_solver.function.domain.answer.Answer
+import pl.michal_cyran.function_solver.theme.AppColors
 import pl.michal_cyran.function_solver.theme.Colors
 import kotlin.math.abs
 
@@ -45,6 +48,14 @@ fun FunctionGraph(
     modifier: Modifier = Modifier,
 ) {
     val textMeasurer = rememberTextMeasurer()
+
+    val xFarthest = function.intervals.flatMap { it.points }.maxOfOrNull { abs(it.x) } ?: 5
+    val minX = -xFarthest.toInt() - 1
+    val maxX = xFarthest.toInt() + 1
+
+    val yFarthest = function.intervals.flatMap { it.points }.maxOfOrNull { abs(it.y) } ?: 5
+    val minY = -yFarthest.toInt() - 1
+    val maxY = yFarthest.toInt() + 1
 
     val dashLength = 20f
     val gapLength = 40f
@@ -68,21 +79,23 @@ fun FunctionGraph(
             repeatMode = RepeatMode.Reverse
         )
     )
-
+    var canvasSize by remember { mutableStateOf(Size.Zero) }
+    val resolvedAnswer = rememberResolvedAnswer(
+           function   = function,
+           answer     = answer,
+           minX       = minX, maxX = maxX,
+           minY       = minY, maxY = maxY,
+           canvasSize = canvasSize,
+       )
     Canvas(
         modifier = modifier
     ) {
+        canvasSize = size
+
         drawRect(
-            color = Colors.background,
+            color = AppColors.Background,
             size = size,
         )
-        val xFarthest = function.intervals.flatMap { it.points }.maxOfOrNull { abs(it.x) } ?: 5
-        val minX = -xFarthest.toInt() - 1
-        val maxX = xFarthest.toInt() + 1
-
-        val yFarthest = function.intervals.flatMap { it.points }.maxOfOrNull { abs(it.y) } ?: 5
-        val minY = -yFarthest.toInt() - 1
-        val maxY = yFarthest.toInt() + 1
 
         drawGrid(minX = minX, maxX = maxX, minY = minY, maxY = maxY, size = size, textMeasurer = textMeasurer)
 
@@ -102,7 +115,7 @@ fun FunctionGraph(
                 val end = points[i + 1]
 
                 drawLine(
-                    color = Colors.blue,
+                    color = AppColors.GraphLine,
                     start = Offset(start.x, start.y),
                     end = Offset(end.x, end.y),
                     strokeWidth = 4f
@@ -113,20 +126,7 @@ fun FunctionGraph(
         }
 
 
-        answer?.let {
-            answerOnGraph(
-                function = function,
-                answer = it,
-                minX = minX,
-                maxX = maxX,
-                minY = minY,
-                maxY = maxY,
-                dashLength = dashLength,
-                gapLength = gapLength,
-                dashesAnimOffset = dashesOffset,
-                circlesAnimRadius = circlesRadius,
-            )
-        }
+       resolvedAnswer?.let { drawResolvedAnswer(it, dashesOffset, circlesRadius) }
     }
 }
 
@@ -145,7 +145,7 @@ fun DrawScope.drawGrid(
     for (i in 0..yLinesCount) {
         val yPosition = size.height / yLinesCount * i
         drawLine(
-            color = Colors.gray,
+            color = AppColors.GridLine,
             start = Offset(0f, yPosition),
             end = Offset(size.width, yPosition),
             strokeWidth = 2f
@@ -155,7 +155,7 @@ fun DrawScope.drawGrid(
     for (i in 0..xLinesCount) {
         val xPosition = size.width / xLinesCount * i
         drawLine(
-            color = Colors.gray,
+            color = AppColors.GridLine,
             start = Offset(xPosition, 0f),
             end = Offset(xPosition, size.height),
             strokeWidth = 2f
@@ -164,14 +164,14 @@ fun DrawScope.drawGrid(
 
 
     drawLine(
-        color = Colors.gray,
+        color = AppColors.GridAxis,
         start = Offset(0f, size.height / 2),
         end = Offset(size.width, size.height / 2),
         strokeWidth = 5f
     )
 
     drawLine(
-        color = Colors.gray,
+        color = AppColors.GridAxis,
         start = Offset(size.width / 2, 0f),
         end = Offset(size.width / 2, size.height),
         strokeWidth = 5f

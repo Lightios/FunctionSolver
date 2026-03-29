@@ -8,3 +8,4 @@ object Colors {
     val cyan = Color(0, 213, 255)
     val blue = Color(66, 176, 245)
 }
+

@@ -1,4 +1,4 @@
-package pl.michal_cyran.math_tools.theme
+package pl.michal_cyran.function_solver.theme
 
 import androidx.compose.ui.graphics.Color
 
